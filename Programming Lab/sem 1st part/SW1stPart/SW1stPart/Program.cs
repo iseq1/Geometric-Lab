@@ -25,48 +25,237 @@ namespace SW1stPart
         */
         public static void Main(string[] args)
         {
-            //надо подумать как get с массиввами правильно сделать.
-            double[] x = {2, 2};
-            double[] x1 = {2, 6};
-            double[] x2 = {6, 6};
-            double[] x3 = {6, 2};
-            double[] x4 = {-7, 7};
-            double[] x5 = {-7, -2};
-            double[] x6 = {0, -2};
 
-            Point2D pt = new Point2D(x);
-            Point2D pt1 = new Point2D(x1);
-            Point2D pt2 = new Point2D(x2);
-            Point2D pt3 = new Point2D(x3);
-            Point2D pt4 = new Point2D(x4);
-            Point2D pt5 = new Point2D(x5);
-            Point2D pt6 = new Point2D(x6);
-
-            Segment s = new Segment(pt, pt1);
-            
-            Console.WriteLine(s.shift(pt1).toString());
-
-            
-            Point2D[] pline = { pt, pt1, pt2, pt3 };
-            Polyline pl = new Polyline(pline);
-
-            Circle cr = new Circle(pt,5);
-            
-            Console.WriteLine(cr.shift(pt1).toString());
-
-            QGon ng = new QGon(pline);
-            Rectangle rec = new Rectangle(pline);
-
-            Console.WriteLine(rec.toString());
-
-            Console.WriteLine(ng.square()); 
-            
             // 
-
-            List<IShape> list = new List<IShape>();
+            Console.WriteLine("Введите количество фигур: ");
+            int countShapes = Convert.ToInt32(Console.ReadLine());
+            List<IShape> shapesList = new List<IShape>(countShapes);
+            for (int i = 0; i < countShapes; i++)
+            {
+                Console.WriteLine("\nВведите название фигуры: ");
+                var shape = Console.ReadLine();
+                if (shape == "Segment")
+                {
+                    Console.WriteLine("Введите координаты начала и конца отрезка: ");
+                    shapesList.Add(new Segment(fromStrToPoint2D(Console.ReadLine()),fromStrToPoint2D(Console.ReadLine())));
+                }
+                if (shape == "Polyline")
+                { 
+                    Console.WriteLine("Введите количество точек кривой: ");
+                    int countPoint = Convert.ToInt32(Console.ReadLine());
+                    Point2D[] point2Ds = new Point2D[countPoint];
+                    Console.WriteLine("Введите координаты каждой точки кривой: ");
+                    for (int j = 0; j < countPoint; j++)
+                    {
+                        point2Ds[j] = fromStrToPoint2D(Console.ReadLine());
+                    }
+                    shapesList.Add(new Polyline(point2Ds));
+                }
+                if (shape == "NGon")
+                {
+                    Console.WriteLine("Введите количество точек н-угольника: ");
+                    int countPoint = Convert.ToInt32(Console.ReadLine());
+                    Point2D[] point2Ds = new Point2D[countPoint];
+                    Console.WriteLine("Введите координаты каждой точки н-угольника: ");
+                    for (int j = 0; j < countPoint; j++)
+                    {
+                        point2Ds[j] = fromStrToPoint2D(Console.ReadLine());
+                    }
+                    shapesList.Add(new NGon(point2Ds));
+                } 
+                if (shape == "TGon")
+                {
+                    Console.WriteLine("Введите координаты каждой точки триугольника: ");
+                    shapesList.Add(new TGon(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine())}));
+                }
+                if (shape == "QGon")
+                {
+                    Console.WriteLine("Введите координаты каждой точки четёрыхугольника: ");
+                    shapesList.Add(new QGon(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine())}));
+                }
+                if (shape == "Rectangle")
+                {
+                    Console.WriteLine("Введите координаты каждой точки прямоугольника: ");
+                    shapesList.Add(new Rectangle(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                              fromStrToPoint2D(Console.ReadLine()),
+                                                              fromStrToPoint2D(Console.ReadLine()),
+                                                              fromStrToPoint2D(Console.ReadLine())}));
+                }
+                if (shape == "Trapeze")
+                {
+                    Console.WriteLine("Введите координаты каждой точки трапеции: ");
+                    shapesList.Add(new Trapeze(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                            fromStrToPoint2D(Console.ReadLine()),
+                                                            fromStrToPoint2D(Console.ReadLine()),
+                                                            fromStrToPoint2D(Console.ReadLine())}));
+                }
+                if (shape == "Circle")
+                {
+                    Console.WriteLine("Введите координаты центра и радиус окружности: ");
+                    shapesList.Add( new Circle(fromStrToPoint2D(Console.ReadLine()), Convert.ToDouble(Console.ReadLine())));
+                }
+            }
             
+            double allSquare = 0;
+            double allLenght = 0;
+            for (int i = 0; i < countShapes; i++)
+            {
+                //Console.WriteLine("Площадь " + shapesList[i].ToString() + ": " + shapesList[i].square());
+                //Console.WriteLine("Длина " + shapesList[i].ToString() + ": " + shapesList[i].length());
+                allSquare += shapesList[i].square();
+                allLenght += shapesList[i].length();
+            }
+            double AverageSquare = allSquare/countShapes;
+            Console.WriteLine("Суммарная площадь введенных фигур: " + allSquare);
+            Console.WriteLine("Суммарная длина введенных фигур: " + allLenght);
+            Console.WriteLine("Средняя площадь введенных фигур: " + AverageSquare);
+        
+            Console.WriteLine("\n===================\n");
+            List<IShape> shapesList2 = new List<IShape>(countShapes);
+            for (int i = 0; i < countShapes; i++)
+            {
+                var shape = shapesList[i];
+                if (shape.GetType() == typeof(Segment))
+                {
+                    Console.WriteLine("Введите координаты начала и конца отрезка: ");
+                    shapesList2.Add(new Segment(fromStrToPoint2D(Console.ReadLine()),fromStrToPoint2D(Console.ReadLine())));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
+                }
+                if (shape.GetType() == typeof(Polyline))
+                { 
+                    Console.WriteLine("Введите количество точек кривой: ");
+                    int countPoint = Convert.ToInt32(Console.ReadLine());
+                    Point2D[] point2Ds = new Point2D[countPoint];
+                    Console.WriteLine("Введите координаты каждой точки кривой: ");
+                    for (int j = 0; j < countPoint; j++)
+                    {
+                        point2Ds[j] = fromStrToPoint2D(Console.ReadLine());
+                    }
+                    shapesList2.Add(new Polyline(point2Ds));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
 
+                }
+                
+                if (shape.GetType() == typeof(TGon))
+                {
+                    Console.WriteLine("Введите координаты каждой точки триугольника: ");
+                    shapesList2.Add(new TGon(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine())}));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
 
+                }
+                else if (shape.GetType() == typeof(QGon))
+                {
+                    Console.WriteLine("Введите координаты каждой точки четёрыхугольника: ");
+                    shapesList2.Add(new QGon(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine()),
+                                                         fromStrToPoint2D(Console.ReadLine())}));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
+
+                }
+                if (shape.GetType() == typeof(Rectangle))
+                {
+                    Console.WriteLine("Введите координаты каждой точки прямоугольника: ");
+                    shapesList2.Add(new Rectangle(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                              fromStrToPoint2D(Console.ReadLine()),
+                                                              fromStrToPoint2D(Console.ReadLine()),
+                                                              fromStrToPoint2D(Console.ReadLine())}));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
+
+                }
+                else if (shape.GetType() == typeof(Trapeze))
+                {
+                    Console.WriteLine("Введите координаты каждой точки трапеции: ");
+                    shapesList2.Add(new Trapeze(new []{fromStrToPoint2D(Console.ReadLine()),
+                                                            fromStrToPoint2D(Console.ReadLine()),
+                                                            fromStrToPoint2D(Console.ReadLine()),
+                                                            fromStrToPoint2D(Console.ReadLine())}));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
+
+                }
+                else if (shape.GetType() == typeof(Circle))
+                {
+                    Console.WriteLine("Введите координаты центра и радиус окружности: ");
+                    shapesList2.Add( new Circle(fromStrToPoint2D(Console.ReadLine()), Convert.ToDouble(Console.ReadLine())));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
+
+                }
+                else if (shape.GetType() == typeof(NGon))
+                { 
+                    Console.WriteLine("Введите количество точек н-угольника: ");
+                    int countPoint = Convert.ToInt32(Console.ReadLine());
+                    Point2D[] point2Ds = new Point2D[countPoint];
+                    Console.WriteLine("Введите координаты каждой точки н-угольника: ");
+                    for (int j = 0; j < countPoint; j++)
+                    {
+                        point2Ds[j] = fromStrToPoint2D(Console.ReadLine()); 
+                    }
+                    shapesList2.Add(new NGon(point2Ds));
+                    Console.WriteLine(CrossOrNOT(shapesList[i], shapesList2[i]));
+                    var movedShape = MoveShape(shapesList2[i]);
+                    Console.WriteLine(CrossOrNOT(shapesList[i], movedShape));
+                 
+                } 
+            }
+            
+        }
+        static public Point2D fromStrToPoint2D(string a)
+        {
+            string[] str = a.Split(' ');
+            double[] coord = { Convert.ToDouble(str[0]), Convert.ToDouble(str[1]) };
+            return new Point2D(coord);
+        }
+        static public string CrossOrNOT(IShape first, IShape second)
+        {
+            bool temp = first.cross(second);
+            if (temp) return "Данные фигуры пересекаются!\n";
+            return "Данные фигуры НЕ пересекаются!\n";
+        }
+        static public IShape MoveShape(IShape i)
+        {
+            Console.WriteLine("Введите тип движения фигуры: ");
+            var move = Console.ReadLine();
+            IShape tempShape = i;
+            if (move == "Shift")
+            {
+                Console.WriteLine("Введите вектор сдвига: ");
+                Point2D vector = fromStrToPoint2D(Console.ReadLine());
+                tempShape = i.shift(vector);
+            }
+            if (move == "Rotate")
+            {
+                Console.WriteLine("Введите угол поворота: ");
+                double angle = Convert.ToDouble(Console.ReadLine());
+                tempShape = i.rot(angle);
+            }
+            if (move == "Symmetry")
+            {
+                Console.WriteLine("Введите ось для симметрии: ");
+                int axis = Convert.ToInt32(Console.ReadLine());
+                tempShape = i.symAxis(axis);
+            }
+            return tempShape;
         }
     }
 }

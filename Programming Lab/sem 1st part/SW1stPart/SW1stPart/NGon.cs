@@ -2,14 +2,14 @@ using System;
 
 namespace SW1stPart
 {
-    public class NGon //: IShape, IPolyPoint
+    public class NGon : IShape, IPolyPoint
     {
         protected internal int n;
         protected internal Point2D[] p;
 
         public NGon(Point2D[] p)
         {
-            this.n = p.Length;
+            n = p.Length;
             this.p = p;
         }
 
@@ -28,10 +28,19 @@ namespace SW1stPart
             if ((i >= 0) && (i < p.Length)){
                 return p[i];
             }
+            throw new ArgumentException("Индекс за пределами массива.");
+        }
+        
+        public void setP(Point2D p, int i)
+        {
+            if ((i >= 0) && (i < this.p.Length))
+            {
+                this.p[i] = p;
+            }
             else
             {
                 throw new ArgumentException("Индекс за пределами массива.");
-            }
+            }     
         }
 
         public void setP(Point2D[] p)
@@ -39,20 +48,9 @@ namespace SW1stPart
             this.p = p;
         }
 
-        public void setP(Point2D[] p, int i)
-        {
-            if ((i >= 0) && (i < this.p.Length))
-            {
-                this.p[i] = p[i];
-            }
-            else
-            {
-                throw new ArgumentException("Индекс за пределами массива.");
-            }
-        }
-
         public double square()
         {
+            // формула гаусса
             double square = 0;
             for (int i = 0; i < getN(); i++)
             {
@@ -75,35 +73,90 @@ namespace SW1stPart
             return len;
         }
 
-        public NGon shift(Point2D a)
+        public IShape shift(Point2D a)
         {
-            return new NGon(new Polyline(p).shift(a).getP());
+            var temp = new Polyline(p).shift(a);
+            return new NGon(((Polyline)temp).getP());
         }
 
-        public NGon rot(double phi)
+        public IShape rot(double phi)
         {
-            return new NGon(new Polyline(p).rot(phi).getP());
+            var temp = new Polyline(p).rot(phi);
+            return new NGon(((Polyline)temp).getP());
         }
 
-        public NGon symAxis(int i)
+        public IShape symAxis(int i)
         {
-            return new NGon(new Polyline(p).symAxis(i).getP());
+            var temp = new Polyline(p).symAxis(i);
+            return new NGon(((Polyline)temp).getP());
         }
 
         public bool cross(IShape i)
         {
-            if (i is NGon)
+            bool temp = false;
+            if (i is Segment)
             {
-                // чето надо сделать тут и в самом интерфейсе
-                return true;
+                Segment segment = (Segment)i;
+                temp = segment.cross(new NGon(getP()));
+            }
+            else if (i is Polyline)
+            {
+                Polyline polyline = (Polyline)i;
+                temp = polyline.cross(new NGon(getP()));
+            }
+            else if (i is NGon)
+            {
+                NGon otherNGon = (NGon)i;
+                bool flag = false;
+                for (int j = 0; j < getN(); j++)
+                {
+                    if (j < getN() - 1)
+                    {
+                        Segment jSegment = new Segment(p[j], p[j + 1]);
+                        flag = jSegment.cross(otherNGon);
+                    }
+                    if (j == getN() - 1)
+                    {
+                        Segment jSegment = new Segment(p[j], p[0]);
+                        flag = jSegment.cross(otherNGon);
+                    }
+
+                    if (flag)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+            else if (i is Circle)
+            {
+                Circle circle = (Circle)i;
+                bool flag = false;
+                for (int j = 0; j < getN(); j++)
+                {
+                    if (j < getN() - 1)
+                    {
+                        Segment jSegment = new Segment(p[j], p[j + 1]);
+                        flag = jSegment.cross(circle);
+                    }
+                    if (j == getN() - 1)
+                    {
+                        Segment jSegment = new Segment(p[j], p[0]);
+                        flag = jSegment.cross(circle);
+                    }
+                    if (flag)
+                    {
+                        temp = true;
+                    }
+                }
             }
             else
             {
-                throw new ArgumentException("Неверный тип объекта");
-            } 
+                throw new ArgumentException("Invalid type of object.");
+            }
+            return temp;  
         }
         
-        public String toString()
+        public override String ToString()
         {
             string str = "NGon: (";
             for (int i = 0; i < getN(); i++)

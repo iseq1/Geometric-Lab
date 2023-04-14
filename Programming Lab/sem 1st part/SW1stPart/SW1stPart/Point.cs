@@ -67,7 +67,7 @@ namespace SW1stPart
             }
         }
 
-        public double abs() {
+        public double abs() { //модуль точки(расстояние от 0.0)
             double sum = 0;
             for (int i = 0; i < dim; i++) {
                 sum += x[i] * x[i];
@@ -75,7 +75,7 @@ namespace SW1stPart
             return Math.Sqrt(sum);
         }
         
-        public static Point add(Point a, Point b)
+        public static Point add(Point a, Point b) //складывание двух точек по координатам
         {
             return a.add(b);
         }
@@ -91,8 +91,8 @@ namespace SW1stPart
             }
             return c;
         }
-        
-        public static Point sub(Point a, Point b)
+         
+        public static Point sub(Point a, Point b) //разность по координатам 
         {
             return a.sub(b);
         }
@@ -109,7 +109,7 @@ namespace SW1stPart
             return c;
         }
 
-        public static Point mult(Point a, double r)
+        public static Point mult(Point a, double r) //умножение на число
         {
             return a.mult(r);
         }
@@ -124,7 +124,7 @@ namespace SW1stPart
             return new Point(this.dim, result);
         }
 
-        public static double mult(Point a, Point b)
+        public static double mult(Point a, Point b) // скалярное произведение двух точек
         {
             return a.mult(b);
         }
@@ -142,7 +142,7 @@ namespace SW1stPart
             return result;
         }
 
-        public static Point symAxis(Point a, int i)
+        public static Point symAxis(Point a, int i) // симметрия относительно оси I
         {
             return a.symAxis(i);
         }
@@ -155,17 +155,63 @@ namespace SW1stPart
             }
 
             double[] newx = new double[getDim];
-            for (int j = 0; j < dim; j++)
-            { 
-                if (i == j) 
-                { 
-                    newx[j] = -x[j];
-                }
-                else
+            if (getDim == 1)
+            {
+                newx[0] = -x[0];
+            }
+
+            if (getDim == 2)
+            {
+                if (i == 0)
                 {
-                    newx[j] = x[j];
+                    newx[0] = x[0];
+                    newx[1] = -x[1];
+                }
+
+                if (i == 1)
+                {
+                    newx[0] = -x[0];
+                    newx[1] = x[1];
                 }
             }
+
+            if (getDim == 3)
+            {
+                if (i == 0)
+                {
+                    newx[0] = x[0];
+                    newx[1] = -x[1];
+                    newx[2] = x[2];
+                }
+
+                if (i == 1)
+                {
+                    newx[0] = -x[0];
+                    newx[1] = x[1];
+                    newx[2] = x[2];
+                }
+                
+                if (i == 1)
+                {
+                    newx[0] = x[0];
+                    newx[1] = x[1];
+                    newx[2] = -x[2];
+                }
+                
+            }
+
+            if (getDim>3)
+            {
+                // check!!!
+                for (int j = 0; j < getDim; j++)
+                {
+                    if (j == i)
+                    {
+                        newx[j] = -x[j];
+                    }
+                }
+            }
+
             return new Point(dim, newx);
         }
 

@@ -25,7 +25,7 @@ namespace SW1stPart
             return p1.cross_prod(p2);
         }
 
-        public Point3D cross_prod(Point3D p1)
+        public Point3D cross_prod(Point3D p1) // векторное произведение двух точек
         {
             var newX = x[1]*p1.x[2] - x[2]*p1.x[1];
             var newY = x[2]*p1.x[0] - x[0]*p1.x[2];
@@ -34,7 +34,8 @@ namespace SW1stPart
             return new Point3D(mas);
         }
 
-        public static double mix_prod(Point3D p1, Point3D p2, Point3D p3)
+        public static double mix_prod(Point3D p1, Point3D p2, Point3D p3) //смешанное произведение трёх точек
+
         {
             return p1.mix_prod(p2, p3);
         }

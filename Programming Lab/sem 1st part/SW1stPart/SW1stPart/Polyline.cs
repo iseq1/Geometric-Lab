@@ -2,7 +2,7 @@ using System;
 
 namespace SW1stPart
 {
-    public class Polyline : OpenFigure//, IPolyPoint
+    public class Polyline : OpenFigure, IPolyPoint
     {
         private int n;
         private Point2D[] p;
@@ -34,16 +34,11 @@ namespace SW1stPart
             }
         }
 
-        public void setP(Point2D[] p)
-        {
-            this.p = p;
-        }
-
-        public void setP(Point2D[] p, int i)
+        public void setP(Point2D p, int i)
         {
             if ((i >= 0) && (i < this.p.Length))
             {
-                this.p[i] = p[i];
+                this.p[i] = p;
             }
             else
             {
@@ -51,7 +46,12 @@ namespace SW1stPart
             }
         }
 
-        public double length()
+        public void setP(Point2D[] p)
+        {
+            this.p = p;
+        }
+        
+        public override double length()
         {
             if (p.Length < 2)
             {
@@ -62,14 +62,13 @@ namespace SW1stPart
                 double length = 0;
                 for (int i = 0; i < p.Length - 1; i++)
                 {
-                    Segment pl = new Segment(p[i], p[i + 1]);
-                    length += pl.length();
+                    length += new Segment(p[i], p[i + 1]).length();
                 }
                 return length;
             }
         }
 
-        public Polyline shift(Point2D a)
+        public override IShape shift(Point2D a)
         {
             //тут 2 способа: либо по точкам сдвигать(Point!=Point2D maybe error), либо по отрезкам(нужно запоминать лишь start)
             Point2D[] plshift = new Point2D[getN()];
@@ -80,7 +79,7 @@ namespace SW1stPart
             return new Polyline(plshift);
         }
 
-        public Polyline rot(double phi)
+        public override IShape rot(double phi)
         {
             Point2D[] plshift = new Point2D[getN()];
             for (int i = 0; i < p.Length; i++)
@@ -90,7 +89,7 @@ namespace SW1stPart
             return new Polyline(plshift);
         }
 
-        public Polyline symAxis(int i)
+        public override IShape symAxis(int i)
         {
             Point2D[] newp = new Point2D[getN()];
             for (int j = 0; j < getN(); j++)
@@ -100,20 +99,65 @@ namespace SW1stPart
             return new Polyline(newp);
         }
 
-        public bool cross(IShape i)
+        public override bool cross(IShape i)
         {
-            if (i is Polyline)
+            bool temp = false;
+            if (i is Segment)
             {
-                // чето надо сделать тут и в самом интерфейсе
-                return true;
+                Segment segment = (Segment)i;
+                temp = segment.cross(new Polyline(getP()));
+            }
+            else if (i is Polyline)
+            {
+                Polyline otherPolyline = (Polyline)i;
+                bool flag;
+                for (int j = 0; j < getN()-1; j++)
+                {
+                    Segment jSegment = new Segment(p[j], p[j + 1]);
+                    flag = jSegment.cross(otherPolyline);
+                    if (flag)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+            else if (i is NGon)
+            {
+                NGon ngon = (NGon)i;
+                bool flag;
+                for (int j = 0; j < getN()-1; j++)
+                {
+                    Segment jSegment = new Segment(p[j], p[j + 1]);
+                    flag = jSegment.cross(ngon);
+                    if (flag)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+            else if (i is Circle)
+            {
+                Circle circle = (Circle)i;
+                bool flag;
+                for (int j = 0; j < getN()-1; j++)
+                {
+                    Segment jSegment = new Segment(p[j], p[j + 1]);
+                    flag = jSegment.cross(circle);
+                    if (flag)
+                    {
+                        temp = true;
+                    }
+                }
             }
             else
             {
-                throw new ArgumentException("Неверный тип объекта");
-            }            
+                throw new ArgumentException("Invalid type of object.");
+            }   
+            
+            return temp;           
         }
 
-        public String toString()
+        public override String ToString()
         {
             string str = "Polyline: (";
             for (int i = 0; i < getN(); i++)

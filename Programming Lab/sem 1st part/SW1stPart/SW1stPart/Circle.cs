@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace SW1stPart
 {
-    public class Circle// : IMoveable
+    public class Circle : IShape
     {
         private Point2D p;
         private double r;
@@ -51,35 +51,76 @@ namespace SW1stPart
             return Math.PI * 2 * r;
         }
 
-        public Circle shift(Point2D a)
+        public IShape shift(Point2D a)
         {
             return new Circle(new Point2D(p.add(a).x),r);
         }
 
-        public Circle rot(double phi)
+        public IShape rot(double phi)
         {
             return new Circle(new Point2D(p.rot(phi).x), r);
         }
 
-        public Circle symAxis(int i)
+        public IShape symAxis(int i)
         {
             return new Circle(new Point2D(p.symAxis(i).x), r);
         }
 
         public bool cross(IShape i)
         {
-            if (i is Circle)
+            bool temp = false;
+            if (i is Segment)
             {
-                // чето надо сделать тут и в самом интерфейсе
-                return true;
+                Segment segment = (Segment)i;
+                temp = segment.cross(new Circle(getP(),getR()));
+            }
+            else if (i is Polyline)
+            {
+                Polyline polyline = (Polyline)i;
+                temp = polyline.cross(new Circle(getP(),getR()));
+            }
+            else if (i is NGon)
+            {
+                NGon ngon = (NGon)i;
+                temp = ngon.cross(new Circle(getP(),getR()));
+            }
+            else if (i is Circle)
+            {
+                Circle otherCircle = (Circle)i;
+                double DistanceBetweenCenters = new Segment(getP(),otherCircle.getP()).length();
+                if (getR() + otherCircle.getR() > DistanceBetweenCenters && 
+                    getR() + DistanceBetweenCenters > otherCircle.getR() && 
+                    DistanceBetweenCenters + otherCircle.getR() > getR())
+                {
+                    //Пересекающиемя окружности - Окружности ω1 и ω2 пересекаются тогда и только тогда, когда числа R1, R2, d
+                    //являются длинами сторон некоторого треугольника, т. е. удовлетворяют всем неравенствам треугольника:
+                    temp = true;
+                }
+
+                if (getR() + otherCircle.getR() == DistanceBetweenCenters ||
+                    Math.Abs(getR()-otherCircle.getR()) == DistanceBetweenCenters)
+                {
+                    //Касающиеся окружности - Окружности ω1и ω2 касаются внешним образом,
+                    //когда R1+R2=d, внутренним образом – когда |R1−R2|=d.
+                    temp = true;
+                }
+                
+                if (getR() + otherCircle.getR() < DistanceBetweenCenters ||
+                    Math.Min(getR(), otherCircle.getR()) + DistanceBetweenCenters < Math.Max(getR(),otherCircle.getR()))
+                {
+                    //Непересекающиеся окружности - Окружность ω1и ω2расположены вне друг друга тогда и только тогда,
+                    //когда R1+R2<d. Окружность ω1 лежит внутри ω2 тогда и только тогда, когда R1+d<R2.
+                    temp = false;
+                }
             }
             else
             {
-                throw new ArgumentException("Неверный тип объекта");
-            } 
+                throw new ArgumentException("Invalid type of object.");
+            }
+            return temp;  
         }
         
-        public String toString()
+        public override String ToString()
         {
             return string.Format("Circle: (center=[{0}], radius={1})", string.Join("; ", p.x), string.Join("; ", r));
         } 

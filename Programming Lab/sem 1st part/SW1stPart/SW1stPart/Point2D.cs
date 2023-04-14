@@ -22,7 +22,7 @@ namespace SW1stPart
             this.x = x;
         }
 
-        public static Point2D rot(Point2D p, double phi)
+        public static Point2D rot(Point2D p, double phi) //поворот точки на угол phi относительно 0.0
         {
             return p.rot(phi);
         }
@@ -31,8 +31,8 @@ namespace SW1stPart
         {
             double sinPhi = Math.Sin(phi);
             double cosPhi = Math.Cos(phi);
-            double newX = Math.Round(x[0] * cosPhi - x[1] * sinPhi, 2);
-            double newY = Math.Round(x[0] * sinPhi + x[1] * cosPhi, 2);
+            double newX = x[0] * cosPhi - x[1] * sinPhi;
+            double newY = x[0] * sinPhi + x[1] * cosPhi;
             double[] mas = {newX, newY}; 
             return new Point2D(mas);
         }

@@ -40,7 +40,6 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Circle.cs" />
-        <Compile Include="IMoveable.cs" />
         <Compile Include="IPolyPoint.cs" />
         <Compile Include="IShape.cs" />
         <Compile Include="NGon.cs" />

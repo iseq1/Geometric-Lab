@@ -18,5 +18,17 @@ namespace SW1stPart
                              (semiPerimeter - (new Segment(p[1], p[2]).length()))*
                              (semiPerimeter - (new Segment(p[2], p[0]).length())));
         }
+        
+        public override String ToString()
+        {
+            string str = "TGon: (";
+            for (int i = 0; i < getN(); i++)
+            {
+                str += string.Format("point({0})=[{1}], ", string.Join(",", i+1), string.Join("; ", p[i].x));
+            }
+            str = str.Substring(0, str.Length - 2);
+            str = str.Insert(str.Length, ")");
+            return str;
+        }
     }
 }
